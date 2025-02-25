@@ -1,5 +1,6 @@
+--In this SQL, I'm querying a database with multiple tables in it to quantify statistics about customer and order data. 
 
---1.)How many many unique orders were placed in January? In other words, how many distinct order ids do we have?
+--1.) How many many unique orders were placed in January? In other words, how many distinct order ids do we have?
 select count(distinct orderid)
 from BIT_DB.JanSales
 WHERE length(orderid) = 6
@@ -12,7 +13,7 @@ WHERE Product = 'IPhone'
 and length(orderid) = 6
 AND orderid <> 'Order ID';
 
---3.)Select the customer account numbers for all the orders that were placed in February.
+--3.) Select the customer account numbers for all the orders that were placed in February.
 select distinct acctnum
 from BIT_DB.customers as cust
 inner join BIT_DB.FebSales as Feb
@@ -20,27 +21,28 @@ on cust.order_id = Feb.orderID
 WHERE length(orderid) = 6
 AND orderid <> 'Order ID';
 
---4.)Which product was the cheapest one sold in January, and what was the price?
+--4.) Which product was the cheapest one sold in January, and what was the price?
 select distinct Product, price
 from BIT_DB.JanSales
 where price in (select min(price) from BIT_DB.JanSales);
--- this one also works
+
+-- Second Method
 SELECT distinct product, price
 FROM BIT_DB.JanSales
 ORDER BY price ASC LIMIT 1;
 
---5.)What is the total revenue for each product sold in January?
+--5.) What is the total revenue for each product sold in January?
 select sum(quantity)* price as revenue, product
 from BIT_DB.JanSales
 group by product;
 
---6.)Which products were sold in February at 548 Lincoln St, Seattle, WA 98101, how many of each were sold, and what was the total revenue?
+--6.) Which products were sold in February at 548 Lincoln St, Seattle, WA 98101, how many of each were sold, and what was the total revenue?
 select sum(quantity),product, sum(quantity)* price as revenue
 from BIT_DB.FebSales
 where location = '548 Lincoln St, Seattle, WA 98101'
 group by product;
 
---7.)How many customers ordered more than 2 products at a time in February, and what was the average amount spent for those customers?
+--7.) How many customers ordered more than 2 products at a time in February, and what was the average amount spent for those customers?
 select count(distinct cust.acctnum), avg(quantity*price)
 from BIT_DB.FebSales as Feb
 left join BIT_DB.customers as cust
